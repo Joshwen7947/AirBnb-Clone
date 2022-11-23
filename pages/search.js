@@ -3,8 +3,11 @@ import { useRouter } from 'next/dist/client/router';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { format } from 'date-fns';
-function Search() {
+import InfoCard from '../components/InfoCard';
+function Search({ searchResults }) {
 	const router = useRouter();
+
+	// console.log(searchResults);
 	const { location, startDate, endDate, numberOfGuests } = router.query;
 
 	const formattedStartDate = format(new Date(startDate), 'dd MMMM yy');
@@ -13,7 +16,9 @@ function Search() {
 
 	return (
 		<div className="h-screen">
-			<Header />
+			<Header
+				placeholder={`${location.toUpperCase()} | ${range} | ${numberOfGuests} guests`}
+			/>
 			<main className="flex">
 				<section className="flex-grow pt-14 px-6">
 					<p className="text-xs">
@@ -29,6 +34,22 @@ function Search() {
 						<p className="button">Rooms and Beds</p>
 						<p className="button">More filters</p>
 					</div>
+					<div className="flex flex-col">
+						{searchResults?.map(
+							({ img, location, title, description, star, price, total }) => (
+								<InfoCard
+									key={img}
+									img={img}
+									location={location}
+									title={title}
+									description={description}
+									star={star}
+									price={price}
+									total={total}
+								/>
+							)
+						)}
+					</div>
 				</section>
 			</main>
 			<Footer />
@@ -37,3 +58,22 @@ function Search() {
 }
 
 export default Search;
+
+const fetch = require('node-fetch');
+const https = require('https');
+const httpsAgent = new https.Agent({
+	rejectUnauthorized: false,
+});
+
+export async function getServerSideProps() {
+	const res = await fetch('https://links.papareact.com/isz', {
+		agent: httpsAgent,
+	});
+	const searchResults = await res.json();
+
+	return {
+		props: {
+			searchResults,
+		},
+	};
+}

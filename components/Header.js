@@ -12,7 +12,7 @@ import {
 	UserCircleIcon,
 	UsersIcon,
 } from '@heroicons/react/solid';
-export default function Header() {
+export default function Header({ placeholder }) {
 	const [searchInput, setSearchInput] = useState('');
 
 	const [startDate, setStartDate] = useState(new Date());
@@ -68,7 +68,7 @@ export default function Header() {
 					value={searchInput}
 					onChange={(event) => setSearchInput(event.target.value)}
 					type={'text'}
-					placeholder="Start your Search"
+					placeholder={placeholder || 'Start your Search'}
 					className="flex-grow pl-5 bg-transparent outline-none text-sm text-gray-600 placeholder-gray-400"
 				/>
 				<SearchIcon className="hidden md:inline-flex h-8 bg-red-400 text-white rounded-full p-1 cursor-pointer md:mx-2" />
